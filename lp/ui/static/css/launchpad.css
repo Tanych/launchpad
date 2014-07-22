@@ -306,6 +306,17 @@ ul.offers {
   color: #999;
 }
 
+/* overlay for "GW Author" indicator */
+#cover-overlay {
+  height: 120px;
+  width: 100px;
+  position: relative;
+  top: 1.4em;
+  left: .4em;
+  background-image:url('http://gwdev-zut.wrlc.org:8888/static/img/gwheaderlogo.png');
+  background-repeat: no-repeat;
+}
+
 /* overriding bootstrap so that facet buttons don't bump when stacked */
 #active-facets .btn {margin-bottom:.4em;}
 
