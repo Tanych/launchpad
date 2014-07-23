@@ -114,7 +114,7 @@ td.field-label {
 
 .linkresolverresource{
     padding-bottom: 0.5em;
-    clear:left;
+    clear: left;
     min-height: 2em;
 }
 
@@ -301,8 +301,6 @@ ul.offers {
 
 #active-facets .fa-ellipsis-v {
   padding-left: .5em;
-  /*top: .5px;
-  position: relative;*/
   color: #999;
 }
 
@@ -330,3 +328,4 @@ ul.offers {
   #home-search-box {width:95%; font-size:20px; line-height:30px;}
   #home-search-box-form {margin-top:10%;}
 }
+
