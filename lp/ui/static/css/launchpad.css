@@ -379,6 +379,22 @@ ul.offers {
 /* overriding bootstrap to avoid content pushing off screen in some views */
 .row {margin-left:0}
 
+button, .button {
+  border-width: 0px;
+  color: white;
+  box-shadow: none;
+  text-decoration: none;
+  font-size: 1em;
+  padding: .4em .4em .3em;
+  background: #4081AF;
+  border-radius: .2em;
+}
+
+button:hover {
+  box-shadow: .2em .2em 5px #777;
+}
+}
+
 @media screen and (max-width: 1200px) {
   #active-facets ul {padding-left:0;}
   #home-search-box {width:80%;}
