@@ -148,7 +148,7 @@ td.field-label {
 
 
 .smallbuttons{
-    font-size: medium;
+    /*font-size: medium;*/
     float: left;
     margin-right: 0.5em;*
 }
@@ -384,7 +384,8 @@ button, .button {
   color: white;
   box-shadow: none;
   text-decoration: none;
-  font-size: 1em;
+  font-size: .8em;
+  line-height: 1em;
   padding: .4em .4em .3em;
   background: #4081AF;
   border-radius: .2em;
