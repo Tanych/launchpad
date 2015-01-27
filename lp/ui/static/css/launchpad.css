@@ -382,8 +382,7 @@ ul.offers {
 button, .button {
   border-width: 0px;
   color: white;
-  /*box-shadow: none;*/
-  box-shadow: .2em .2em 5px #777;
+  box-shadow: none;
   text-decoration: none;
   font-size: .8em;
   line-height: 1em;
