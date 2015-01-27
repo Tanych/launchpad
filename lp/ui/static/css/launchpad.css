@@ -383,6 +383,7 @@ button, .button {
   border-width: 0px;
   color: white;
   box-shadow: none;
+  box-shadow: .2em .2em 5px #777;
   text-decoration: none;
   font-size: .8em;
   line-height: 1em;
@@ -392,7 +393,8 @@ button, .button {
 }
 
 button:hover {
-  box-shadow: .2em .2em 5px #777;
+  /*box-shadow: .2em .2em 5px #777;*/
+  background: #03314B;
 }
 }
 
