@@ -390,6 +390,7 @@ button, .button {
   /* background: #4081AF; Libsite7 color */
   background: #0088cc;
   border-radius: .2em;
+  margin-top: -.2em;
 }
 
 button:hover {
