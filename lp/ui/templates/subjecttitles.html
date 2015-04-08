@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% load launchpad_extras %}
+
+{% block title %}GW findit{% endblock %}
+
+{% block content %}
+
+<!-- PROTOTYPE TODO: -->
+<!-- PAGE NEEDS TO BE CONVERTED TO HTML 5 RESPONSIVE WEB DESIGN                     --> 
+<!-- ADD PAGINATION FOR RESULTS                                                     -->
+<!-- NOT REALLY TESTING OR PRESENCE OF A GW HOLDING OR CALCULATING FACETS IN VIEW   -->
+<!-- VIEW DOES NOT GET HOLDINGS OR ITEMS AND THEREFORE DOES NOT GIVE AVAILABILITY   -->
+
+    <table border='0' cellpadding='4' cellspacing='1' width='99%'>
+        <tr valign='top'>
+            <td >
+                <form method='GET' action='/heading/'+this.q.value()>
+                    <input type='text' name='q' size='60' placeholder='search an exact subject heading' value=''>
+                    <div class='advanced-search'>
+                        Results for:   <i class="fa fa-tag"></i> &nbsp; <strong>{{ subject }} </strong>
+                        {% if inst == 'all' %}
+                        <br><br>
+                        <a class="btn" title="Refine by Institution" 
+                            href="/subjecttitles/?headid={{ headingID }}&sortby={{ sortby }}&inst=GW">Held by any consortium institution 
+                            <i class="fa fa-ellipsis-v"></i>  <i class="fa fa-times-circle"></i></a>
+                        {% else %}
+                        <br><br>
+                        <a class="btn" title="remove Refine by Institution" 
+                            href="/subjecttitles/?headid={{ headingID }}&sortby={{ sortby }}&inst=all">Held by George Washington University
+                            <i class="fa fa-ellipsis-v"></i>  <i class="fa fa-times-circle"></i></a>
+                        {% endif %}
+                    </div>
+                </form>
+            </td>
+            <td >
+                <form method='GET' action='/search'+this.q.value() >
+                    <input type='text' name='q' placeholder='search key word in any field' value=''></input>
+                    <div class='advanced-search'>
+                        <a href='/advanced/'>Advanced Search</a> /
+                        <a href='/tips/'>Search Tips</a> <br>
+                    </div>
+                    </form>
+                        {% if sortby == 'title' %}
+                        <a class="btn" title="Change to sort by date" 
+                            href="/subjecttitles/?headid={{ headingID }}&sortby=date&inst={{ inst }}">Sorted by title 
+                            <i class="fa fa-ellipsis-v"></i>  <i class="fa fa-times-circle"></i></a>
+                        {% else %}
+                        <a class="btn" title="Change to sort by title" 
+                            href="/subjecttitles/?headid={{ headingID }}&sortby=title&inst={{ inst }}">
+                            Sorted by date <i class="fa fa-ellipsis-v"></i>  <i class="fa fa-times-circle"></i></a>
+                        {% endif %}
+            </td>
+        <tr>
+            <td >
+            <table cellpadding='1' width='100%' cellspacing='1' name='listing'  border='0'>
+                <tr>
+                    <td> <strong> Title Information </strong> 
+                    <td> &nbsp; &nbsp;  </td>
+                </tr>
+              {% for t in titles %}
+                <tr>
+                    {% if t.LIBRARY_NAME == 'GW' or t.LIBRARY_NAME == 'E-Resources' or t.LIBRARY_NAME == 'JB' or t.LIBRARY_NAME == 'E-GovDoc' %} 
+                    <td><b><a href='/item/{{ t.BIB_ID }}'>{{ t.TITLE }}</a></b> <br>
+                    {% else %}
+                    <td><a href='/item/{{ t.BIB_ID }}'>{{ t.TITLE }}</a> <br>
+                        {% endif %}
+                    {% if t.AUTHOR %}
+                        <font size='2'>
+                        <a href="/search?q=author:'{{ t.AUTHOR }}'">{{ t.AUTHOR }}</a> <br>
+                        </font>
+                     {% endif %}
+                     <font size='2'> {{ t.IMPRINT }}<br>
+                     {{ subject }}
+                     <!-- 
+                             TO DO: CONVERT BIB FORMAT IN THE VIEW BEFORE SENDING DATA TO TEMPLATE
+                     -->
+                     {% if 'as' in t.BIB_FORMAT %} 
+                        <br> Periodical 
+                     {% endif %}
+                     {% if 'sound recording' in t.TITLE  %}  
+                        <br> Audio 
+                     {% endif %}
+                     {% if 'videorecording' in t.TITLE%}  
+                        <br> Video 
+                     {% endif %}
+                     {% if 'am' in t.BIB_FORMAT %}
+                            <br> Book
+                     {% endif %}
+                     <!--
+                            END IF GW SET OF TEMPLATE FORMATTING CONVERSTION
+                     -->
+                     (<i>{{ t.BIB_FORMAT }}</I>)
+                     {% if t.ISSN %}
+                        ISSN: {{ t.ISSN }}
+                     {% endif %}
+                     {% if t.ISBN %}
+                        <font size='2'>  ISBN: {{ t.ISBN|clean_isbn }} </font>
+                     {% endif %}
+                     <br>
+
+                    <!-- TODO translate the insitution names in the view -->
+                    
+                    {% if t.LIBRARY_NAME == 'GW' or t.LIBRARY_NAME == 'E-Resources' or t.LIBRARY_NAME == 'JB' or t.LIBRARY_NAME == 'E-GovDoc' %} 
+                    <b>
+                    {% if t.LIBRARY_NAME == 'GW' %} 
+                        George Washington University 
+                    {% endif %}
+                    {% if t.LIBRARY_NAME == 'JB' %}
+                        Jacob Burns Law Library (GW)
+                    {% endif %}
+                    {% if t.LIBRARY_NAME == 'HI' %}
+                        Himmelfarb Health Sciences Library(GW)
+                    {% endif %}
+                    {% if t.LIBRARY_NAME == 'E-Resources' or t.LIBRARY_NAME == 'E-GovDoc' %}
+                        Online
+                    {% endif %}
+                    </b>
+                    <!-- non GW institution could be handled using values in local settings -->
+                    {% else %}
+                        {% if t.LIBRARY_NAME == 'AU' or t.LIBRARY_NAME == 'AL' %}    
+                            American University
+                        {% endif %}
+                        {% if t.LIBRARY_NAME == 'CU' or t.LIBRARY_NAME == 'LI' %}    
+                            Catholic University
+                        {% endif %}
+                        {% if t.LIBRARY_NAME == 'DC' %}    
+                            University of the District of Columbia
+                        {% endif %}
+                        {% if t.LIBRARY_NAME == 'GA' %}    
+                            Gallaudet University
+                        {% endif %}
+                        {% if t.LIBRARY_NAME == 'GM' or t.LIBRARY_NAME == 'LL' %}
+                            George Mason University
+                        {% endif %}
+                        {% if t.LIBRARY_NAME == 'GT' or t.LIBRARY_NAME == 'GTL' or t.LIBRARY_NAME == 'DA' %}
+                            Georgetown University
+                        {% endif %}
+                        {% if t.LIBRARY_NAME == 'HU' or t.LIBRARY_NAME == 'HL' or t.LIBRARY_NAME == 'HS' %}
+                            Howard University    
+                        {% endif %}
+                        {% if t.LIBRARY_NAME == 'MU' %}
+                            Marymount University
+                        {% endif %}
+                        {% if t.LIBRARY_NAME == 'WR' %}
+                            Washington Research Library Consortium (WRLC)
+                        {% endif %}
+                   {% endif %}
+                   </font></td>
+                    <!-- check for an availble cover image -->
+                        <td >
+                            <img id='cover-image' src='http://covers.openlibrary.org/b/isbn/{{ t.ISBN }}-M.jpg' width='80' title='cover image from Open Library' alt='cover image'/>
+                            &nbsp; &nbsp;
+                        </td>
+                    </tr>
+
+              {% endfor %}
+          </table>
+      </td>
+      <!-- finished results now print right hand block of page -->
+       <td bgcolor='#EAEAEA' width='25%'>
+           <strong>Browse Subject Headings</strong><br><br>
+            <font size='2'>
+                 <i class="fa fa-sort"></i> &nbsp; <strong>Sort results by:</strong>
+                 <p>
+                 <ul>
+                     <li><a href="/subjecttitles/?headid={{ headingID }}&sortby=title&inst={{ inst }}">Title</a></li>
+                     <li><a href="/subjecttitles/?headid={{ headingID }}&sortby=date&inst={{ inst }}">Date (newest first)</a></li>
+                 </ul>
+                 <hr>
+           <strong>Refine Results</strong><br><br>
+                 {{ titlecount }} Titles
+                 <hr>
+                 <i class="fa fa-graduation-cap"></i> &nbsp; <strong>Institution </strong>
+                 <p>
+                 <ul>
+                     <font size='2'>
+                     <li><a href="/subjecttitles/?headid={{ headingID }}&sortby={{sortby }}&inst=GW">George Washington University</a><br>
+                     <li><a href="/subjecttitles/?headid={{ headingID }}&sortby={{ sortby }}&inst=all">Any Consortium Institution</a></li>
+                 </ul>
+        </td>
+        </tr>
+        </table>
+        </p>
+{% endblock content %}
