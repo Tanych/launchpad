@@ -38,7 +38,16 @@ urlpatterns = patterns(
     url(r'^advanced/$', 'advanced_search', name='advanced_search'),
     url(r'^availability$', 'availability', name='availability'),
     url(r'^related$', 'related', name='related'),
-    url(r'^tips/$', 'tips', name='tips')
+    url(r'^tips/$', 'tips', name='tips'),
+    # TODO: ADD regex to map the intended syntax for subject heading search/browse
+    # e.g., headingid/?headid=9768051
+    url(r'^headingid/(.*)$', 'headingid', name='headingid'),
+    #
+    # e.g., heading/?q=philosophers--french
+    url(r'^heading/(.*)$', 'heading', name='heading'),
+    #
+    # e.g., subjecttitles/?headid=9767991&sortby=title (may have several options like &inst)
+    url(r'^subjecttitles/(.*)$', 'subjecttitles', name='subjecttitles')
 )
 
 if settings.ENABLE_HUMANS:
