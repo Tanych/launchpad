@@ -513,7 +513,7 @@
                 {% elif name == "Series" %}
                 <a href="{% url 'search' %}?q=PublicationSeriesTitle:%22{{ val }}%22">{{ val }}</a>
                 {% elif name == "Subjects" or name == "Genre" %}
-                {{ val }}
+                <a href='/heading/?q={{ val }}'>{{ val }}</a>
                 {% else %}
                 {{ val }}
                 {% endif %}
