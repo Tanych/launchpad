@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}GW findit{% endblock %}
+
+{% block content %}
+<!-- PROTOTYPE PAGE NEEDS TO BE CONVERTED TO HTML 5                                                           -->
+<!-- The query range is 50 so 50, or less, will be returned. Could have no query limit, and paginate results    -->
+    <table border='0' cellpadding='4' cellspacing='1' width='99%'>
+        <tr valign='top'>
+            <td >
+                <form method='GET' action='/heading/'+this.q.value()>
+                    <input type='text' name='q' size='60' placeholder='search an exact subject heading' 
+                    value='{{ origterms }}'>
+                    <div class='advanced-search'>
+                    </div>
+                </form>
+            </td>
+            <td >
+                <form method='GET' action='/search'+this.q.value() >
+                    <input type='text' name='q' placeholder='search key word in any field' value=''></input>
+                    <div class='advanced-search'>
+                        <a href='/advanced/'>Advanced Search</a> /
+                        <a href='/tips/'>Search Tips</a>
+                    </div>
+                    </form>
+            </td>
+        <tr>
+            <td colspan='2'>
+                     <strong> Major Subject Headings </strong> </td>
+        </tr>
+    </tr>
+            <td>
+            <table width='100%'>
+                <!-- not shown
+                Archaeology 1313, Biology 1746, Chemistry 1822, Astronomy 2338, Europe History 1543
+                China 2483, Art History 1761
+                -->
+                <tr>
+                    <td width='33%'>
+                    <table align='left' cellpadding='4' cellspacing='1'   border='0'>
+                        <tr> <td> <a href='/heading/?q=ANTHROPOLOGY'>Anthropology</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=BUSINESS'>Business</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=CHRISTIANITY'>Christianity</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=CIVIL RIGHTS'>Civil Rights</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=COMPUTER SCIENCE'>Computer Science</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=COMMUNISM'>Communism</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=DEMOCRACY'>Democracy</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=ECONOMICS'>Economics</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=ENGLISH LITERATURE'>English Literature</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=FINANCE'>Finance</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=GEOGRAPHY'>Geography</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=GLOBALIZATION'>Globalization</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=HISTORY'>History</a></td> </tr>
+                    </table>
+                </td>
+                <td width='33%'>
+                    <table align='left' cellpadding='4' cellspacing='1'   border='0'>
+                        <tr> <td> <a href='/heading/?q=INTERNATIONAL LAW'>International Law</a> </td> </tr>
+                        <tr> <td> <a href='/heading/?q=ISLAM'>Islam</a> </td> </tr>
+                        <tr> <td> <a href='/heading/?q=JUDAISM'>Judaism</a> </td> </tr>
+                        <tr> <td> <a href='/heading/?q=LAW'>Law</a> </td> </tr>
+                        <tr> <td> <a href='/heading/?q=LITURATURE'>Literature</a> </td> </tr>
+                        <tr> <td> <a href='/heading/?q=MEDICINE'>Medicine</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=MOTION PICTURES'>Motion Pictures</a></td></tr>
+                        <tr> <td> <a href='/heading/?q=NORTH AMERICA'>North America</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=PHILOSOPHY'>Philosophy</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=PHYSICS'>Physics</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=POETRY'>Poetry</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=POLITICAL SCIENCE'>Political Science</a></td> <tr>
+                        <tr> <td> <a href='/heading/?q=PRESIDENTS UNITED STATES'>Presidents -- United States</a></td> <tr>
+                    </table>
+                </td>
+                <td width='33%'>
+                    <table cellpadding='1' cellspacing='4'   border='0'>
+                        <tr> <td> <a href='/heading/?q=PSYCHOLOGY'>Psychology</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=RACE'>Race</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=RELIGION'>Religion</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=SHAKESPEARE WILLIAM 1564 1616'>Shakespeare</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=SOCIETY FOR AMERICAN ARCHAEOLOGY'>Societies</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=SOCIOLOGY'>Sociology</a> </td> </tr>
+                        <tr> <td> <a href='/heading/?q=SOUTH AMERICA'>South America</a></td></tr>
+                        <tr> <td> <a href='/heading/?q=TECHNOLOGY'>Technology</a></td></tr>
+                        <tr> <td> <a href='/heading/?q=THEATER'>Theater</a></td></tr>
+                        <tr> <td> <a href='/heading/?q=UNITED STATES HISTORY'>United States -- History</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=UNITED STATES FOREIGN RELATIONS'>United States -- Foreign Relations</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=WAR'>War</a></td> </tr>
+                        <tr> <td> <a href='/heading/?q=WOMEN'>Women</a></td> </tr>
+                     </table>
+              </td>
+          </tr>
+      </table>
+                  <td bgcolor='#EAEAEA' width='30%'>
+                 <h2>Browse Subject Headings</h2>
+                 Sorry, no results for:<br><br>
+
+                 <i class="fa fa-tag"></i> <i>{{ origterms }}</i>
+                 <br><br>
+                 This section will provide some information about Subject Headings. The easiest way to find and use the Subject Headnigs is to start with a keyword search and then look at the Subject Headings of a relevant item to locate other related material.
+                 <br><br>
+                 
+                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sem risus, tristique eget justo ut, porttitor porttitor turpis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec eget sapien arcu. Nulla nulla neque, semper quis consequat eget, suscipit eget nunc. Sed condimentum nibh eu tellus tincidunt, vel malesuada sem euismod. Duis bibendum leo ipsum, vitae ultrices tellus placerat mollis. Suspendisse vestibulum, augue sed egestas mollis, nisi quam fringilla urna, quis suscipit enim mauris id nibh. Sed vitae sodales tellus, vitae 
+        
+        </td>
+        </tr>
+        </table>
+        </p>
+{% endblock content %}
