@@ -1,9 +1,11 @@
-import re
-import logging
 import datetime
+import logging
+import re
+import time
 import urlparse
 
 import bibjsontools
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db.utils import DatabaseError
@@ -12,7 +14,9 @@ from django.shortcuts import render, redirect
 from django.utils import simplejson as json
 from django.views.decorators.cache import cache_page
 
-from ui import voyager, apis, marc, summon, db
+from requests import HTTPError
+
+from ui import voyager, apis, marc, summon, db, subjects
 from ui.sort import libsort, availsort, elecsort, templocsort, \
     splitsort, enumsort, callnumsort, strip_bad_holdings, holdsort
 
@@ -459,7 +463,8 @@ def search(request):
     if online:
         if q:
             q += " AND"
-        q += " lccallnum:('gw electronic' OR 'shared+electronic' OR 'e-resources' OR 'e-govpub' OR 'streaming')"
+        q += " lccallnum:('gw electronic' OR 'shared+electronic'" + \
+            " OR 'e-resources' OR 'e-govpub' OR 'streaming')"
 
     # add selected facets to the query
     for facet in params.getlist('facet'):
@@ -484,8 +489,24 @@ def search(request):
     if fmt == "html":
         kwargs['for_template'] = True
 
-    # TODO: catch/retry when there are Summon API errors here?
-    search_results = api.search(q, **kwargs)
+    # catch and retry up to MAX_ATTEMPTS times if we get errors
+    # from the Summon API?
+    retries = 0
+    while True:
+        try:
+            search_results = api.search(q, **kwargs)
+            break
+        except HTTPError as error:
+            logger.error('Summon error: %s', error)
+            retries += 1
+            if retries <= settings.SER_SOL_API_MAX_ATTEMPTS:
+                logger.error('%s retries, sleeping 1s and retrying' % retries)
+                time.sleep(1)
+                continue
+            else:
+                logger.exception('unable to search Summon: %s' % error)
+                return error500(request)
+
     if not raw:
         search_results = _remove_facets(search_results)
         search_results = _reorder_facets(search_results)
@@ -537,7 +558,8 @@ def search(request):
 
         # create links for going to the next set of page results
         next_page_range = prev_page_range = None
-        if page_range_end - 1 < actual_pages and page_range_end - 1 < max_pages:
+        if page_range_end - 1 < actual_pages \
+                and page_range_end - 1 < max_pages:
             page_query['page'] = page_range_end
             next_page_range = page_query.urlencode()
         if page_range_start > page_links:
@@ -649,7 +671,7 @@ def _reorder_facets(search_results):
     # facets can come back in different order from summon
     # this function makes sure we always display them in the same order
     facets_order = ['Institution', 'Library', 'ContentType', 'Author',
-                    'Discipline', 'SubjectTerms', 'TemporalSubjectTerms', 
+                    'Discipline', 'SubjectTerms', 'TemporalSubjectTerms',
                     'GeographicLocations', 'Genre', 'Language']
     new_facets = []
     for facet_name in facets_order:
@@ -687,6 +709,7 @@ def _format_facets(request, search_results):
 
     return search_results
 
+
 def _get_active_facets(request):
     active_facets = []
 
@@ -708,6 +731,7 @@ def _get_active_facets(request):
         })
     return active_facets
 
+
 def _normalize_facet_name(f_name, fc_name):
     if f_name == 'ContentType':
         if fc_name == 'Audio Recording':
@@ -720,3 +744,112 @@ def _normalize_facet_name(f_name, fc_name):
         fc_name = fc_name.title()
 
     return fc_name
+
+def _normalize_subject_heading(terms):
+    # TODO: handle the case where an ampersand symbol is part of the subject heading
+    # handle spacing of -- and words: space before and after, only after, only before, or alone
+    # first, remove the case where the subject is a person with a date followed by a dash
+    if terms.find('-',len(terms)-1) > 0:
+        terms = terms[0:len(terms)-1]
+    terms = terms.replace("---"," ")
+    terms = terms.replace(" -- "," ")
+    terms = terms.replace("-- "," ")
+    terms = terms.replace(" --"," ")
+    terms = terms.replace("--"," ")
+    # remove single dash
+    terms = terms.replace("-"," ")
+    # remove certain special chars and convert to UPPERCASE
+    terms = re.sub("[().,':;]","", terms)
+    terms = re.sub("-","", terms)
+    terms = terms.upper()
+    return terms
+
+def heading(request,options):
+    # Request is coming from hyperlink on subject heading or patron search
+    # e.g., heading/?q=philosophers--french
+    params = request.GET
+    try:
+        terms = params.get('q', '')
+        origterms = terms
+        terms = _normalize_subject_heading(terms)
+        headingID = subjects.get_heading_id(terms)
+        prevID = int(headingID) - 25
+        headings_for_id = subjects.get_headings_list(headingID)
+        nextID = headings_for_id[len(headings_for_id)-1]['HEADING_ID']
+        # TODO: headingid.html page needs to outout the list of headings in HTML-5
+        return render(request, 'headingid.html', {
+            "headingID": headingID,
+            "nextID": nextID,
+            "prevID": prevID,
+            "headings_for_id": headings_for_id,
+            "terms": terms,
+            "origterms": origterms,
+        })
+    except:
+        # This page shows major subject headings as hyperlinks
+        return render(request, 'headingnone.html', {
+            "origterms": origterms,
+        })
+
+def headingid(request,options):
+    # Request is coming from system-generated page with links by heading id
+    # this is for linking from a page after the headings are found by terms
+    # e.g., headingid/?headid=10311779
+    params = request.GET
+    try:
+        headingID = params.get('headid', '')
+        prevID = int(headingID) - 25
+        headingID = str(headingID)
+        headings_for_id = subjects.get_headings_list(headingID)
+        nextID = headings_for_id[len(headings_for_id)-1]['HEADING_ID']
+        origterms = headings_for_id[0]['DISPLAY_HEADING']
+        # TODO: headingid.html must print the list in HTML-5 format
+        return render(request, 'headingid.html', {
+            "headingID": headingID,
+            "prevID": prevID,
+            "nextID": nextID,
+            "headings_for_id": headings_for_id,
+            "origterms": origterms,
+        })
+    except:
+        return render(request, '404.html', {'num': options }, status=404)
+
+def subjecttitles(request,options):
+    # Request is coming from system-generated page with links on headings as headingid
+    # e.g., subjecttitles/&headid=10311779&sortby=title&inst=all
+    # sortby will be either title or date
+    # inst will be a two-character library code. default all, code needs to be uppercase, e.g., GW
+    # note foramt and pubyear not yet implemented in query
+    params = request.GET
+    try:
+        headingID   = params.get('headid', '')
+        sortby      = params.get('sortby', '')
+        inst        = params.get('inst', '')
+        format      = params.get('format', '')
+        pubyear     = params.get('pubyear', '')
+        if inst == '':
+            inst = 'all'
+        if sortby == '':
+            sortby = 'title'
+        titles      = subjects.get_titles_for_heading(headingID,[sortby,inst,pubyear,format])
+        titlecount  = len(titles)
+        subject     = titles[0]['DISPLAY_HEADING']
+        # TODO: create facet count. subjectitles.html must print the titles
+        return render(request, 'subjecttitles.html', {
+            "titles": titles,
+            "titlecount": titlecount,
+            # "facets": facets,
+            "subject": subject,
+            "sortby": sortby,
+            "inst": inst,
+            "format": format,
+            "pubyear": pubyear,
+            "headingID": headingID,
+        })
+    except:
+        return render(request, 'headingnone.html', {'num': options }, status=404)
+
+def references(request,options):
+# possible future use
+    return []
+
