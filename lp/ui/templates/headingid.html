@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}GW findit{% endblock %}
+
+{% block content %}
+<!-- PROTOTYPE PAGE NEEDS TO BE CONVERTED TO HTML 5                                                           -->
+<!-- The query range is 50 so 50, or less, will be returned. Could have no query limit, and paginate results    -->
+    <table border='0' cellpadding='4' cellspacing='1' width='99%'>
+        <tr valign='top'>
+            <td >
+                <form method='GET' action='/heading/'+this.q.value()>
+                    <input type='text' name='q' size='60' placeholder='search an exact subject heading' value='{{ origterms }}'>
+                    <div class='advanced-search'>
+                          <a href=/headingid/?headid={{ prevID }}><i class="fa fa-angle-double-left"></i> &nbsp; Previous</a>
+                        / <a href=/headingid/?headid={{ nextID }}>Next &nbsp; <i class="fa fa-angle-double-right"></i></a> 
+                    </div>
+                </form>
+            </td>
+            <td >
+                <form method='GET' action='/search'+this.q.value() >
+                    <input type='text' name='q' placeholder='keyword search' value=''></input>
+                    <div class='advanced-search'>
+                        <a href='/advanced/'>Advanced Search</a> /
+                        <a href='/tips/'>Search Tips</a>
+                    </div>
+                    </form>
+            </td>
+        <tr>
+            <td >
+            <table cellpadding='1' width='100%' cellspacing='1' name='listing'  border='0'>
+                <tr>
+                    <td> <strong> #Titles </strong> </td>
+                    <td> &nbsp; &nbsp; &nbsp; </td>
+                    <td> <strong> Subject Heading </strong> </td>
+                </tr>
+              {% for h in headings_for_id %}
+                <tr>
+                        <td> <a href='/subjecttitles/?headid={{ h.HEADING_ID }}&sortby=title&inst=all'>{{ h.OPACBIBS }}</a></td>
+                        <td> &nbsp; </td>
+                        <td>  {{ h.DISPLAY_HEADING }}   </td>
+                </tr>
+              {% endfor %}
+          </table>
+              </td>
+                  <td bgcolor='#EAEAEA' width='30%'>
+                 <h2>Browse Subject Headings</h2>
+                 Results beginning with:<br><br>
+
+                 <i class="fa fa-tag"></i> <i>{{ origterms }}</i>
+                 <br><br>
+                 This section will provide some information about Subject Headings. The easiest way to find and use the Subject Headnigs is to start with a keyword search and then look at the Subject Headings of a relevant item to locate other related material.
+                 <br><br>
+                 
+                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sem risus, tristique eget justo ut, porttitor porttitor turpis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec eget sapien arcu. Nulla nulla neque, semper quis consequat eget, suscipit eget nunc. Sed condimentum nibh eu tellus tincidunt, vel malesuada sem euismod. Duis bibendum leo ipsum, vitae ultrices tellus placerat mollis. Suspendisse vestibulum, augue sed egestas mollis, nisi quam fringilla urna, quis suscipit enim mauris id nibh. Sed vitae sodales tellus, vitae 
+        
+        </td>
+        </tr>
+        </table>
+        <p>
+        <font size='1'>Source: Washington Research Library Consortium union catalog. </font>
+        </p>
+{% endblock content %}
