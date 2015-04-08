@@ -179,7 +179,7 @@
          <ul class="subjects" itemprop="about">
             {% for subject in doc.about %}
             <li itemprop="about">
-            <i class="fa fa-angle-double-right"></i> {{ subject.name }} 
+            <i class="fa fa-angle-double-right"></i> <a href='/heading/?q={{ subject.name }}'> {{ subject.name }} </a>
             </li>
             {% if not forloop.last %}<br /> {% endif %}
             {% endfor %}
