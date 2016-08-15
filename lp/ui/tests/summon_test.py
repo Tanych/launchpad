@@ -14,10 +14,11 @@ class SummonTests(unittest.TestCase):
         if os.environ.get("TRAVIS", False):
             id = os.environ.get("SUMMON_ID")
             key = os.environ.get("SUMMON_SECRET_KEY")
+            print 'summonkey___%s' %key
         else:
             id = settings.SUMMON_ID
             key = settings.SUMMON_SECRET_KEY
-
+        
         self.summon = Summon(id, key)
         self.summoner = summoner.Summon(id, key)
 
