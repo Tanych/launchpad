@@ -1,7 +1,3 @@
-notifications: 
-  email: 
-  - michaelc@email.gwu.edu
-  - dchud@email.gwu.edu
 branches: 
   only: 
   - master
