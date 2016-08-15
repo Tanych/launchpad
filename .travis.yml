@@ -2,6 +2,7 @@ branches:
   only: 
   - master
   - refactor
+  - Django-1.8.13 
 install: pip install -r requirements.txt
 language: python
 python: 
